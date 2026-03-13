@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">小天AI助手</string>
+    <string name="voice_button">开始语音输入</string>
+    <string name="status_ready">准备就绪</string>
+    <string name="status_listening">正在监听...</string>
+    <string name="status_processing">正在处理...</string>
+    <string name="mic_permission_required">需要麦克风权限</string>
+    <string name="qqmusic_not_installed">请先安装QQ音乐</string>
+    <string name="accessibility_service_description">允许应用控制QQ音乐播放器，实现语音控制功能。本服务会读取QQ音乐界面信息并模拟点击操作。</string>
+    <string name="netease_accessibility_service_description">允许应用控制网易云音乐播放器，实现语音控制功能。本服务会读取网易云音乐界面信息并模拟点击操作。</string>
+    <string name="enable_accessibility_service">启用无障碍服务</string>
+    <string name="accessibility_service_not_enabled">未启用无障碍服务</string>
+    <string name="select_music_app">选择音乐APP</string>
+</resources>

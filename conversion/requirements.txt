@@ -1,0 +1,30 @@
+# ExecuTorch 模型导出依赖
+# 环境: Python 3.11+, CPU 即可 (无需 GPU)
+
+# PyTorch 核心
+torch==2.10.0
+transformers==5.1.0
+safetensors==0.7.0
+sentencepiece==0.2.1
+protobuf==6.33.5
+huggingface_hub==1.4.1
+accelerate==1.12.0
+tokenizers==0.22.2
+
+# ExecuTorch 导出 (REQUIRED)
+executorch==1.1.0
+torchao==0.15.0  # INT8 动态量化支持 (XNNPACKQuantizer)
+
+# 可选: ONNX 导出路径 (已废弃，推荐使用 ExecuTorch)
+# onnx>=1.16.0
+# onnxruntime>=1.17.0
+
+# 注意事项:
+# 1. v8 最优配置: INT8 Dynamic + XNNPACK 委派 + SDPA 融合
+# 2. 使用 to_edge_transform_and_lower() 而非 to_edge() 避免委派 Bug
+# 3. 动态 shape 导出需要 torch>=2.10.0
+
+# NPU 后端 (可选，需额外安装):
+# Qualcomm QNN: pip install executorch[qnn]
+# MediaTek MTK: pip install executorch[mediatek]
+# Vulkan GPU: pip install executorch[vulkan]

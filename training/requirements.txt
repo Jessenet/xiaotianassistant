@@ -1,0 +1,28 @@
+# 模型训练依赖
+# 环境: Python 3.11+, CUDA 11.8+, RTX 4050 或更高
+
+torch==2.10.0
+transformers==5.1.0
+peft==0.18.1
+accelerate==1.12.0
+datasets>=2.14.0
+safetensors==0.7.0
+sentencepiece==0.2.1
+protobuf==6.33.5
+pyyaml==6.0.3
+tqdm>=4.67.0
+
+# 可选: 混合精度训练
+# bitsandbytes>=0.41.0  # 不使用量化训练
+
+# 训练脚本使用的额外依赖
+huggingface_hub==1.4.1
+tokenizers==0.22.2
+
+# 噪声评估脚本依赖 (noise_eval/)
+numpy==2.4.1
+scipy==1.17.0
+librosa==0.11.0
+soundfile==0.13.1
+imageio-ffmpeg==0.6.0
+vosk==0.3.45

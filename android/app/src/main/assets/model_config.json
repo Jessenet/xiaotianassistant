@@ -1,0 +1,15 @@
+{
+  "model_file": "model_xnnpack.pte",
+  "max_cache_len": 80,
+  "num_layers": 18,
+  "num_kv_heads": 1,
+  "head_dim": 256,
+  "vocab_size": 10918,
+  "has_kv_cache": true,
+  "kv_cache_mutated": false,
+  "supports_batch_prefill": true,
+  "quantization": "INT8 Dynamic (XNNPACKQuantizer)",
+  "precision": "DYNAMIC_QUANT",
+  "model_dtype": "float32",
+  "xnnpack_threads": 4
+}

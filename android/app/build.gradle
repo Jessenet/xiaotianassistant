@@ -1,0 +1,107 @@
+plugins {
+    id 'com.android.application'
+    id 'org.jetbrains.kotlin.android'
+}
+
+android {
+    namespace 'com.xiaotian.assistant'
+    compileSdk 34
+
+    defaultConfig {
+        applicationId "com.xiaotian.assistant"
+        minSdk 26
+        targetSdk 34
+        versionCode 1
+        versionName "1.0.0"
+
+        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+        
+        // 只保留 arm64-v8a 架构，减少 APK 体积
+        ndk {
+            abiFilters 'arm64-v8a'
+        }
+    }
+
+    signingConfigs {
+        release {
+            storeFile file('xiaotian-release.jks')
+            storePassword 'xiaotian123'
+            keyAlias 'xiaotian'
+            keyPassword 'xiaotian123'
+        }
+    }
+
+    sourceSets {
+        main {
+            assets.srcDirs = ['src/main/assets']
+        }
+    }
+
+    buildTypes {
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+            signingConfig signingConfigs.release
+        }
+    }
+    
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_17
+        targetCompatibility JavaVersion.VERSION_17
+    }
+    
+    kotlinOptions {
+        jvmTarget = '17'
+    }
+    
+    buildFeatures {
+        viewBinding true
+    }
+
+    // 支持大模型文件 (.pte ExecuTorch, .onnx Sherpa)
+    aaptOptions {
+        noCompress "pte"
+        noCompress "bin"
+        noCompress "onnx"
+    }
+
+    // 允许 native .so 库
+    packagingOptions {
+        pickFirst '**/*.so'
+    }
+}
+
+dependencies {
+    // Android核心库
+    implementation 'androidx.core:core-ktx:1.12.0'
+    implementation 'androidx.appcompat:appcompat:1.6.1'
+    implementation 'com.google.android.material:material:1.11.0'
+    implementation 'androidx.constraintlayout:constraintlayout:2.1.4'
+    
+    // ExecuTorch Android Runtime (替代 MediaPipe)
+    // XNNPACK CPU 后端 (通用 ARM 设备) + QNN NPU 后端
+    // 注: executorch-android-qnn 已包含基础类, 不能同时引入 executorch-android
+    implementation 'org.pytorch:executorch-android:1.1.0'
+    
+    // Sherpa-ONNX + SenseVoice 离线语音识别 (替代 Vosk)
+    implementation files('libs/sherpa-onnx-1.12.25.aar')
+    
+    // 协程
+    implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-android:1.7.3'
+    implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-core:1.7.3'
+    
+    // Lifecycle
+    implementation 'androidx.lifecycle:lifecycle-runtime-ktx:2.7.0'
+    implementation 'androidx.lifecycle:lifecycle-viewmodel-ktx:2.7.0'
+    
+    // JSON解析
+    implementation 'com.google.code.gson:gson:2.10.1'
+    
+    // 权限请求
+    implementation 'com.google.accompanist:accompanist-permissions:0.32.0'
+    
+    // 测试
+    testImplementation 'junit:junit:4.13.2'
+    androidTestImplementation 'androidx.test.ext:junit:1.1.5'
+    androidTestImplementation 'androidx.test.espresso:espresso-core:3.5.1'
+}

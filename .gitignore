@@ -1,0 +1,88 @@
+# .gitignore
+
+# ============ Python ============
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+.venv/
+env/
+venv/
+ENV/
+
+# ============ 训练产物 & 模型缓存 ============
+training/output/
+training/model_cache/
+training/logs/
+
+# 模型二进制文件 (通过 GitHub Releases 分发)
+*.pth
+*.bin
+*.safetensors
+*.tflite
+*.onnx
+*.pte
+*.pb
+
+# ============ 转换中间产物 ============
+conversion/merged_model/
+conversion/executorch_output/
+conversion/tflite_output/
+conversion/saved_model/
+conversion/onnx_model/
+conversion/onnx_quantized/
+conversion/quantized_model/
+conversion/quantized_model_8bit/
+
+# ============ Android ============
+android/.gradle/
+android/local.properties
+android/.idea/
+android/build/
+android/app/build/
+android/app/.cxx/
+android/captures/
+*.apk
+*.ap_
+*.aab
+
+# Android assets 中的大模型文件 (通过 GitHub Releases 分发)
+android/app/src/main/assets/model_xnnpack.pte
+android/app/src/main/assets/silero_vad.onnx
+android/app/src/main/assets/tokenizer.model
+android/app/src/main/assets/sherpa-onnx-sense-voice-zh-en-ja-ko-yue-2024-07-17/
+
+# Android libs 中的 AAR (通过 GitHub Releases 分发)
+android/app/libs/*.aar
+
+# ============ 文档 (只保留根目录 README.md) ============
+android/*.md
+conversion/*.md
+training/*.md
+noise_eval/*.md
+模型推理情况.MD
+
+# ============ IDE ============
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.DS_Store
+
+# ============ 日志 & 临时文件 ============
+*.log
+logs/
+app_logs.txt
+tmp/
+temp/
+*.tmp
+
+# ============ 安全相关 ============
+*.jks
+*.keystore
+
+# ============ 噪音评估音频文件 ============
+noise_eval/noise/
+noise_eval/speech/

@@ -1,0 +1,9 @@
+{
+  "asr_engine": "SenseVoice-Small INT8 (sherpa-onnx)",
+  "noise_gate_multiplier": 1.5,
+  "pre_emphasis_alpha": 0.9,
+  "evaluated_on_snr_leq_5db": true,
+  "noise_source": "highway_tire+wind_noise",
+  "n_speech_samples": 12,
+  "avg_cer_hard_snr": 0.0
+}
