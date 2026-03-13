@@ -1,22 +1,23 @@
-﻿# XiaotianAssistant — 小天智能语音助手
+﻿# XiaotianAssistant — 小天AI语音助手
 
- 部署在 Android 手机上的离线语音助手。支持音乐播放控制 8 大指令。
+Android 手机上的离线AI语音助手，使用LLM大模型解析用户指令，支持音乐播放控制 8 大指令。
 
 开发时运行环境：Android 15，QQ播放器V14.1
 
+## 支持的命令
 
-## 推理性能对比
+说你好小天，唤醒语音助手。
 
-| 指标 | v3 (基线) | v8 (8层+INT8) | **v9 (18层+INT8)** | 说明 |
-|------|----------|--------------|-------------------|------|
-| **Output Tokens** | 62 | 32 | **23** | v9 JSON 更紧凑 |
-| **Prefill** | 1780ms | 171ms | **179ms** | 18 tokens batch |
-| **Decode Total** | 14,763ms | 381ms | **1166ms** | 43ms/tok |
-| **Decode Speed** | 238ms/tok | 11ms/tok | **43ms/tok** | 18层计算量更大 |
-| **总耗时** | 16,588ms | 554ms | **1352ms** | 端到端 |
-| 模型参数 | 73.9M (12层) | 51.6M (8层) | **107.3M (18层)** | 全层保留 |
-| 模型大小 | 282 MB | 76.4 MB | **130.5 MB** | INT8 Dynamic |
-| 推理质量 | ✅ | ✅ | ✅✅ | **v9 无需降级** |
+| 命令 | 示例 | Function Call |
+|------|------|---------------|
+| 播放歌曲 | "播放周杰伦的稻香" | `play_song(song_name, artist)` |
+| 暂停 | "暂停" | `pause_music()` |
+| 继续播放 | "继续播放" | `resume_music()` |
+| 下一首 | "下一首" | `next_song()` |
+| 上一首 | "上一首" | `previous_song()` |
+| 绝对音量 | "音量调到50" | `set_volume(level)` |
+| 调高音量 | "大声点" / "调高音量" | `volume_up()` |
+| 调低音量 | "小声点" / "调低音量" | `volume_down()` |
 
 
 ## 技术架构
@@ -34,8 +35,8 @@
 │              ┌─────────────────────────────┐     │
 │              │   SmartAssistantAgent        │     │
 │              │   (ExecuTorch XNNPACK 推理)  │     │
-│              │   Pruned Gemma3 51.6M INT8   │     │
-│              │   76.4MB + BPE Tokenizer     │     │
+│              │   Pruned Gemma3 107M INT8   │     │
+│              │   130.5 MB + BPE Tokenizer     │     │
 │              └─────────────┬───────────────┘     │
 │                            │                     │
 │              ┌─────────────▼───────────────┐     │
@@ -73,7 +74,7 @@ boltassistant/
 │   ├── export_pipeline.py                # ExecuTorch 导出流水线
 │   ├── merged_model/                     # 合并后 HF 模型
 │   └── executorch_output/
-│       ├── model_xnnpack.pte             # ExecuTorch INT8 v8 (76.4 MB, 8层)
+│       ├── model_xnnpack.pte             # ExecuTorch INT8 v8 (130.5 MB)
 │       └── tokenizer.json                # BPE 分词器
 ├── android/                               # Android 工程
 │   ├── app/src/main/
@@ -90,7 +91,7 @@ boltassistant/
 │   │   │   ├── QQMusicController.kt      # QQ 音乐控制
 │   │   │   └── NeteaseMusicController.kt # 网易云音乐控制
 │   │   └── assets/
-│   │       ├── model_xnnpack.pte         # ExecuTorch INT8 v8 (76.4 MB, 8层)
+│   │       ├── model_xnnpack.pte         # ExecuTorch INT8 v8 (130.5 MB)
 │   │       ├── tokenizer.json            # BPE 分词器
 │   │       ├── silero_vad.onnx           # Silero VAD 模型 (0.61 MB)
 │   │       ├── sherpa-onnx-1.12.25.aar   # Sherpa-ONNX 推理运行时 (libs/)
@@ -99,26 +100,13 @@ boltassistant/
 └── README.md
 ```
 
-## 支持的命令
-
-| 命令 | 示例 | Function Call |
-|------|------|---------------|
-| 播放歌曲 | "播放周杰伦的稻香" | `play_song(song_name, artist)` |
-| 暂停 | "暂停" | `pause_music()` |
-| 继续播放 | "继续播放" | `resume_music()` |
-| 下一首 | "下一首" | `next_song()` |
-| 上一首 | "上一首" | `previous_song()` |
-| 绝对音量 | "音量调到50" | `set_volume(level)` |
-| 调高音量 | "大声点" / "调高音量" | `volume_up()` |
-| 调低音量 | "小声点" / "调低音量" | `volume_down()` |
-
 ## 推理结果
 
 ### 设备信息
 
 | 项目 | 值 |
 |------|-----|
-| 设备 | Motorola XT2507-5 |
+| 设备 | Motorola |
 | SoC | MediaTek Dimensity 8300 (MT6897) |
 | Android | 15 |
 
@@ -134,54 +122,8 @@ boltassistant/
 | Stop 条件 | JSON 花括号平衡检测 (22-26 步) |
 | 优化方案 | **INT8 Dynamic + XNNPACK 委派修复 + SDPA + 全 18 层** |
 
-### 端侧推理示例 (v9)
-
-**测试 1: "播放后来"**
-```
-Prefill: 200ms (18 tokens, 11ms/tok, batch)
-Decode:  943ms (23 tokens, 41ms/tok)
-Total:   1147ms
-
-模型输出: {"f": "play_song", "p": {"s": "后来"}}
-最终命令: 播放歌曲 - 歌曲: 后来
-→ QQ音乐搜索播放, 返回 true ✅
 ```
 
-**测试 2: "播放别怕我伤心"**
-```
-Prefill: 179ms (22 tokens, 8ms/tok, batch)
-Decode:  1166ms (27 tokens, 43ms/tok)
-Total:   1352ms
-
-模型输出: {"f": "play_song", "p": {"s": "别怕我伤心"}}
-最终命令: 播放歌曲 - 歌曲: 别怕我伤心
-→ QQ音乐搜索播放, 返回 true ✅
-```
-
-**测试 3: "播放响起"**
-```
-Prefill: 160ms (19 tokens, 8ms/tok, batch)
-Decode:  1003ms (24 tokens, 41ms/tok)
-Total:   1163ms
-
-模型输出: {"f": "play_song", "p": {"s": "响起"}}
-→ QQ音乐搜索播放, 返回 true ✅
-```
-
-**安全检查: "我有" (噪声误识别)**
-```
-模型输出: {"f": "play_song", "p": {"s": "有"}}
-→ 安全检查: 原始输入无音乐意图，判定为模型幻觉，拦截 ✅
-最终命令: 未识别
-```
-
-<details>
-
-**"播放周杰伦的稻香"**: Prefill 171ms, Decode 381ms, Total 554ms → `{"f":"play_song","p":{"s":"稻香","a":"周杰伦"}}` ✅
-
-**"暂停音乐"**: Prefill 184ms, Decode 272ms, Total 458ms → `{"f":"pause_music","p":{}}` ✅
-
-</details>
 
 
 ## 许可证
